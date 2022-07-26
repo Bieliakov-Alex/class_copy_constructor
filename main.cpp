@@ -36,7 +36,8 @@ class DynamicArray{
 public:
     DynamicArray();
     DynamicArray(size_t size);
-    DynamicArray(const& DynamicArray some_array);
+    DynamicArray(const DynamicArray& some_array);
+    ~DynamicArray();
 private:
     size_t size;
     int* array_pointer;
@@ -54,8 +55,23 @@ size(size)
     array_pointer = new int[size];
 }
 
-DynamicArray::DynamicArray(const& DynamicArray some_array){
-    array_pointer = some_array.array_pointer;
+DynamicArray::DynamicArray(const DynamicArray& some_array):
+size{some_array.size}
+{
+    array_pointer = new int[size];
+
+    for(size_t i = 0; i < size; ++i){
+        array_pointer[i] = some_array.array_pointer[i];
+    }
+}
+
+DynamicArray::~DynamicArray(){
+    
+    if(array_pointer != nullptr)
+    {
+        delete[] array_pointer;
+        array_pointer = nullptr;
+    }
 }
 
 int main() 
@@ -68,5 +84,10 @@ int main()
     std::cout<<square(3)<<std::endl;
     Point p1(1, 2);
     //int x = p1.x;
+
+    Point *p2 = new Point(3, 4);
+
+    p1.print();
+    p2->print();
     return 0;
 }
