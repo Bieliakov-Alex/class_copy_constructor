@@ -19,23 +19,75 @@ public:
    }
 
    //Copy constructor
-   Point(const Point& point){
-       x = point.x;
-       y = point.y;
+   Point(const Point& point):
+   x{point.x},
+   y{point.y}
+   {}
+
+   int GetX() const{
+       return x;
    }
 
-   void print(){
+   int GetY() const{
+       return y;
+   }
+
+   void print() const{
+       std::cout<<"x: "<<x<<" y: "<<y<<std::endl;
+   }
+
+   const Point* GetThis() const{
+       return this;
+   }
+
+   void non_const_print(){
        std::cout<<"x: "<<x<<" y: "<<y<<std::endl;
    }
 private:
-    int x;
-    int y;
+    const int x;
+    const int y;
 };
+
+//Inheritance
+class Point3D: public Point{
+public:
+    Point3D(): z{0}{}
+
+    Point3D(int x, int y, int z):
+    Point{x, y},
+    z{z}
+    {}
+
+    Point3D(const Point3D& point):
+    Point{point.GetX(), point.GetY()},
+    z{point.z}
+    {}
+
+private:
+    const int z;
+};
+
+/*
+public:
+public -> public
+protected -> protected
+private -> no access
+
+private:
+public -> private
+protected -> private
+private -> no access
+
+protected:
+public -> protected
+protecte -> protected
+private -> no access
+*/
 
 class DynamicArray{
 public:
     DynamicArray();
-    DynamicArray(size_t size);
+    explicit DynamicArray(size_t size); //constructor-converter
     DynamicArray(const DynamicArray& some_array);
     ~DynamicArray();
 private:
@@ -52,6 +104,7 @@ array_pointer(nullptr)
 DynamicArray::DynamicArray(size_t size):
 size(size)
 {
+    std::cout<<"DynamicArray(size_t size)"<<std::endl;
     array_pointer = new int[size];
 }
 
@@ -74,6 +127,8 @@ DynamicArray::~DynamicArray(){
     }
 }
 
+void fuzz(const DynamicArray& array){}
+
 int main() 
 {
     int result = square(2);
@@ -89,5 +144,19 @@ int main()
 
     p1.print();
     p2->print();
+
+    std::cout<<"&p1="<<&p1<<"="<<p1.GetThis()<<std::endl;
+    std::cout<<"&p2="<<p2<<"="<<p2->GetThis()<<std::endl;
+
+    const Point* arg=p1.GetThis();
+    //arg->non_const_print();
+    arg->print();
+
+    Point3D point3d1(3, 4, 5);
+    point3d1.print();
+
+    size_t size1 = 1;
+    fuzz(size1); //fuzz(DynamicArray(size));
+
     return 0;
 }
